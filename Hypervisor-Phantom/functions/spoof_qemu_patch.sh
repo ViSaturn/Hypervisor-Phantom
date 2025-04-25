@@ -68,21 +68,8 @@ acquire_qemu_source() {
     fmtr::info "Old directory deleted. Re-downloading..."
   fi
 
-  fmtr::info "Downloading QEMU source archive and signature..."
+  fmtr::info "Downloading QEMU source archive..."
   curl -sSO "$QEMU_URL" || { fmtr::fatal "Failed to download QEMU source archive."; exit 1; }
-  curl -sSO "$QEMU_SIG_URL" || { fmtr::fatal "Failed to download QEMU signature file."; exit 1; }
-
-  fmtr::log "Verifying source authenticity..."
-  if ! gpg --keyserver keys.openpgp.org --recv-keys "$GPG_KEY" &>> "$LOG_FILE"; then
-    fmtr::fatal "Failed to import QEMU signing key"
-    exit 1
-  fi
-
-  if ! gpg --verify "$QEMU_SIG" "$QEMU_ARCHIVE" &>> "$LOG_FILE"; then
-    fmtr::fatal "Signature verification FAILED! Archive may be compromised."
-    exit 1
-  fi
-  fmtr::log "Signature verification successful"
 
   fmtr::info "Extracting QEMU source archive..."
   tar xJf "$QEMU_ARCHIVE" || { fmtr::fatal "Failed to extract QEMU archive."; exit 1; }
